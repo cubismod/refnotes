@@ -180,6 +180,12 @@ class refnotes_bibtex_mode extends \dokuwiki\Parsing\ParserMode\AbstractMode {
             $this->Lexer->addExitPattern($pattern, $this->name);
         }
     }
+    /**
+     * Required by AbstractMode
+     */
+    public function handle($match, $state, $pos, Doku_Handler $handler) {
+        return false;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
