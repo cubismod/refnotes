@@ -240,7 +240,7 @@ class refnotes_bibtex_entry_mode extends refnotes_bibtex_mode {
 
         list($open, $close) = ($type == 'parented') ? array('\(', '\)') : array('{', '}');
 
-        $this->entryPattern[] = '^@\w+\s*' . $open . '(?=.*' . $close . ')';
+        $this->entryPattern[] = '@\w+\s*' . $open . '(?=.*' . $close . ')';
         $this->exitPattern[] = '\s*(?:' . $close . '|(?=@))';
 
         $this->allowedModes = array('field');
@@ -256,7 +256,7 @@ class refnotes_bibtex_field_mode extends refnotes_bibtex_mode {
     public function __construct() {
         parent::__construct();
 
-        $this->entryPattern[] = '^\s*\w[\w-]+\s*=\s*';
+        $this->entryPattern[] = '\s*\w[\w-]+\s*=\s*';
         $this->exitPattern[] = '\s*(?:,|(?=[\)}@]))';
 
         $this->allowedModes = array('integer_value', 'string_value_quoted', 'string_value_braced', 'concatenation');
@@ -290,7 +290,7 @@ class refnotes_bibtex_string_value_mode extends refnotes_bibtex_mode {
 
         list($open, $close, $exit) = ($type == 'quoted') ? array('"', '"', '"') : array('{', '}', '(?:}|(?=@))');
 
-        $this->entryPattern[] = '^' . $open . '(?=.*' . $close . ')';
+        $this->entryPattern[] = $open . '(?=.*' . $close . ')';
         $this->exitPattern[] = $exit;
 
         $this->allowedModes = array('nested_braces_' . $type);
