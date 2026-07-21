@@ -67,7 +67,10 @@ class refnotes_parser_core {
     public function exitParsingContext($handler) {
         $this->handler = $handler;
 
-        unset($this->context[count($this->context) - 1]);
+        // Fail-safe: NEVER pop the base context, guaranteeing we always have a context to fallback to.
+        if (count($this->context) > 1) {
+            unset($this->context[count($this->context) - 1]);
+        }
     }
 
     /**

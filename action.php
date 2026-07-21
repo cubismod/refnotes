@@ -78,12 +78,15 @@ class refnotes_after_parser_handler_done {
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         foreach ($trace as $i => $frame) {
-            if (isset($frame['function']) && ($frame['function'] === 'withSubParser' || $frame['function'] === 'acquireSubParser')) {
+            $func = $frame['function'] ?? '';
+            if ($func === 'withSubParser' || $func === 'acquireSubParser') {
                 return true;
             }
-            if (isset($frame['class']) && $frame['class'] === 'dokuwiki\Parsing\Parser' && $frame['function'] === 'parse') {
+            $class = $frame['class'] ?? '';
+            if (($class === 'dokuwiki\Parsing\Parser' || $class === 'Doku_Parser') && $func === 'parse') {
                 $caller = $trace[$i + 1] ?? array();
-                if (isset($caller['function']) && $caller['function'] !== 'p_get_instructions') {
+                $callerFunc = $caller['function'] ?? '';
+                if ($callerFunc !== 'p_get_instructions' && $callerFunc !== 'getInstructions') {
                     return true;
                 }
             }
