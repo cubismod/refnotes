@@ -59,6 +59,10 @@ class refnotes_after_parser_handler_done {
      *
      */
     public function handle($event, $param) {
+        if ($this->isSubParser()) {
+            return;
+        }
+
         refnotes_parser_core::getInstance()->exitParsingContext($event->data);
 
         /* We need a new instance of mangler for each event because we can trigger it recursively
@@ -67,6 +71,24 @@ class refnotes_after_parser_handler_done {
         $mangler = new refnotes_instruction_mangler($event);
 
         $mangler->process();
+    }
+
+    private function isSubParser() {
+        if (!class_exists('dokuwiki\Parsing\ModeRegistry')) return false;
+
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        foreach ($trace as $i => $frame) {
+            if (isset($frame['function']) && ($frame['function'] === 'withSubParser' || $frame['function'] === 'acquireSubParser')) {
+                return true;
+            }
+            if (isset($frame['class']) && $frame['class'] === 'dokuwiki\Parsing\Parser' && $frame['function'] === 'parse') {
+                $caller = $trace[$i + 1] ?? array();
+                if (isset($caller['function']) && $caller['function'] !== 'p_get_instructions') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 
